@@ -1,7 +1,10 @@
 --[[
   Neovim config for headless/TTY environments (Pi 4, servers, etc.)
   All icons are ASCII-safe — no Nerd Font or GUI dependencies.
-  Drop this into ~/.config/nvim/init.lua on the target machine.
+
+  Usage:
+    git clone https://github.com/YOUR_USER/nvim-tty.git ~/.config/nvim
+    nvim
 --]]
 
 -- ──────────────────────────────────────────────────────────
@@ -25,7 +28,15 @@ vim.opt.termguicolors = use_24bit
 -- ──────────────────────────────────────────────────────────
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.fn.isdirectory(lazypath) then
-	vim.fn.system({
+	local git_ok = vim.fn.executable("git") == 1
+	if not git_ok then
+		vim.api.nvim_err_writeln(
+			"nvim-tty: 'git' not found. Install git (sudo apt install git)"
+				.. " or place this file at ~/.config/nvim/init.lua with a working internet connection."
+		)
+		return
+	end
+	local ret = vim.fn.system({
 		"git",
 		"clone",
 		"--filter=blob:none",
@@ -33,6 +44,12 @@ if not vim.fn.isdirectory(lazypath) then
 		"--branch=stable",
 		lazypath,
 	})
+	if vim.v.shell_error ~= 0 then
+		vim.api.nvim_err_writeln(
+			"nvim-tty: Failed to clone lazy.nvim. Check your internet connection.\n" .. ret
+		)
+		return
+	end
 end
 vim.opt.rtp:prepend(lazypath)
 

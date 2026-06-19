@@ -17,6 +17,7 @@ framebuffer console (`TERM=linux`).
 | File explorer | nvim-tree (no-icon mode) |
 | Terminal | toggleterm, toggle with `<C-\>` |
 | Format on save | Enabled for lua, py, go, rs, c, cpp, ts, js |
+| Leader key | `<Space>` (not backslash) |
 
 ## Prerequisites
 
@@ -70,11 +71,11 @@ Clone directly into Neovim's config directory:
 git clone https://github.com/YOUR_USER/nvim-tty.git ~/.config/nvim
 ```
 
-Or if you already have an existing config and want to try this alongside it:
+Or to try it alongside an existing config:
 
 ```bash
 git clone https://github.com/YOUR_USER/nvim-tty.git ~/nvim-tty
-alias nvim-tty='nvim -u ~/nvim-tty/nvim-tty.lua'   # add to ~/.bashrc
+alias nvim-tty='nvim -u ~/nvim-tty/init.lua'   # add to ~/.bashrc
 ```
 
 ### 3. First launch
@@ -118,17 +119,19 @@ Servers pre-configured in the config:
 ## Key bindings
 
 | Key | Action |
-|---|---|
-| `<leader>ff` | Find files (Telescope) |
-| `<leader>fg` | Live grep |
-| `<leader>fb` | Switch buffer |
-| `<leader>fh` | Search help |
-| `<leader>td` | Show diagnostics |
-| `<leader>e` | Toggle file tree |
+|---|---|---|
+| `<Space>ff` | Find files (Telescope) |
+| `<Space>fg` | Live grep |
+| `<Space>fb` | Switch buffer |
+| `<Space>fh` | Search help |
+| `<Space>td` | Show diagnostics |
+| `<Space>e` | Toggle file tree |
+| `<Space>w` | Save file |
+| `<Space>q` | Quit |
 | `gd` / `gD` | Go to definition / declaration |
 | `gr` / `gi` | Find references / implementation |
-| `<leader>rn` | Rename symbol |
-| `<leader>ca` | Code action |
+| `<Space>rn` | Rename symbol |
+| `<Space>ca` | Code action |
 | `K` | Hover documentation |
 | `[d` / `]d` | Previous / next diagnostic |
 | `jk` or `kj` (quickly) | Escape insert/visual mode |
@@ -136,13 +139,29 @@ Servers pre-configured in the config:
 
 ## Customization
 
-The config is a single `nvim-tty.lua` file. Edit it directly — all sections
-are labeled with comment headers:
+The config is split into modules under `lua/`:
 
-- `4. Core editor options` — tabs, wrapping, mouse, etc.
-- `5. Keymaps` — add or change bindings here
-- `6. Plugins` — add or remove plugins from lazy.nvim's setup
-- `7. Miscellaneous improvements` — autocmds for format, trim, etc.
+```
+init.lua               Entry point, bootstrap, loads everything
+lua/
+├── core/
+│   ├── env.lua        Terminal capability detection
+│   ├── symbols.lua    ASCII text symbols (no Nerd Font)
+│   ├── options.lua    Editor options & netrw disable
+│   ├── keymaps.lua    All keybindings
+│   └── autocmds.lua   Autocommands & user commands
+└── plugins/
+    ├── colorscheme.lua
+    ├── treesitter.lua
+    ├── lsp.lua         Mason + lspconfig
+    ├── cmp.lua         Autocompletion
+    ├── telescope.lua   Fuzzy finder
+    ├── lualine.lua     Statusline
+    ├── nvim-tree.lua   File explorer
+    └── toggleterm.lua  Terminal
+```
+
+Edit any module directly — lazy.nvim picks up changes on restart.
 
 ## TTY compatibility notes
 
